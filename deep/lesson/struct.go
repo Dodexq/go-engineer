@@ -22,7 +22,7 @@ func main() {
 	fmt.Printf("%#v\n", client)
 	updateAvatar(&client)
 	fmt.Printf("%#v\n", client)
-	updateName(&client)
+	updateName("Artem", &client)
 	fmt.Printf("%#v\n", client.Name)
 }
 
@@ -30,6 +30,6 @@ func updateAvatar(client *Client) {
 	client.IMG.URL = "updated_url"
 }
 
-func updateName(client *Client) {
-	client.Name = "Artem"
+func updateName(name string, client *Client) {
+	client.Name = name
 }
