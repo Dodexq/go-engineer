@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Node struct {
 	data int
@@ -11,9 +13,8 @@ type LinkedList struct {
 	head *Node
 }
 
-func (list *LinkedList) listAppend(data int) {
+func (list *LinkedList) insertAtBack(data int) {
 	newNode := &Node{data: data, next: nil}
-
 	if list.head == nil {
 		list.head = newNode
 		return
@@ -26,30 +27,33 @@ func (list *LinkedList) listAppend(data int) {
 	current.next = newNode
 }
 
-func (list *LinkedList) listPrepend(data int) {
+func (list *LinkedList) insertAtPrev(data int) {
 	if list.head == nil {
-		newNode := &Node{data: data, next: nil}
-		list.head = newNode
+		list.head = &Node{data: data, next: nil}
 		return
+	} else {
+		newNode := &Node{data: data, next: list.head}
+		list.head = newNode
 	}
-	newNode := &Node{data: data, next: list.head}
-	list.head = newNode
+}
+
+func (list *LinkedList) showAll() {
+	head := list.head
+	if head.next != nil {
+		for head.next != nil {
+			fmt.Println(head.data)
+			head = head.next
+		}
+	}
+	fmt.Println(head.data)
+
 }
 
 func main() {
-	a := &LinkedList{}
-	a.listAppend(1)
-	a.listAppend(2)
-	a.listAppend(3)
-	a.listPrepend(0)
-
-	b := a.head
-	for a.head.next != nil {
-		fmt.Println(b)
-		if b.next == nil {
-			return
-		}
-		b = b.next
-
-	}
+	l := &LinkedList{}
+	l.insertAtBack(1)
+	l.insertAtBack(2)
+	l.insertAtPrev(5)
+	l.insertAtBack(3)
+	l.showAll()
 }
