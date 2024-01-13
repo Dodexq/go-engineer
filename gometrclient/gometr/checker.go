@@ -1,6 +1,9 @@
 package gometr
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type Checker struct {
 	items []Checkable
@@ -17,10 +20,6 @@ type Checkable interface {
 	Health() bool
 }
 
-type Metrics struct {
-	ID string
-}
-
 func (c *Checker) Add(elements ...Checkable) {
 	c.items = append(c.items, elements...)
 }
@@ -31,18 +30,31 @@ func (c *Checker) GetAllIDs() {
 	}
 }
 
-func (m *Metrics) GetMetrics() string {
+func (c *Checker) String() string {
+	var ids []string
+	for _, item := range c.items {
+		ids = append(ids, item.GetID())
+	}
+	return fmt.Sprintf("Checker with IDs: %s", strings.Join(ids, ", "))
+}
+
+func (c *Checker) GetMetrics() string {
 	return "This is a metrics"
 }
 
-func (m *Metrics) Ping() error {
+func (c *Checker) Ping() error {
 	return nil
 }
 
-func (m *Metrics) GetID() string {
-	return m.ID
+func (c *Checker) GetID() string {
+	var userInput string
+
+	fmt.Print("Введите ID: ")
+	fmt.Scanln(&userInput)
+
+	return strings.TrimSpace(userInput)
 }
 
-func (m *Metrics) Health() bool {
+func (c *Checker) Health() bool {
 	return true
 }

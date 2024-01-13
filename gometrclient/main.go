@@ -9,6 +9,10 @@ func main() {
 	a := gometr.GoMetrClient{}
 	a.NewGometr("https://ya.ru", 20)
 	fmt.Println(a)
-	c := &gometr.Metrics{ID: "sd"}
-	fmt.Println(c.GetID(), c.Health())
+
+	ch := &gometr.Checker{}
+	fz := &gometr.Checker{}
+	ch.Add(ch)
+	ch.Add(fz)
+	fmt.Println(ch)
 }
