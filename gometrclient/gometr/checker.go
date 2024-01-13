@@ -2,11 +2,20 @@ package gometr
 
 import (
 	"fmt"
+	"io"
+	"net/http"
+	"regexp"
 	"strings"
 )
 
 type Checker struct {
 	items []Checkable
+}
+
+type Data struct {
+	DataPing   bool
+	IDs        string
+	DataHealth bool
 }
 
 type Measurable interface {
@@ -38,15 +47,44 @@ func (c *Checker) String() string {
 	return fmt.Sprintf("Checker with IDs: %s", strings.Join(ids, ", "))
 }
 
-func (c *Checker) GetMetrics() string {
-	return "This is a metrics"
+func (d *Data) GetMetrics() string {
+	// URL, по которому вы хотите сделать GET-запрос
+	url := "http://127.0.0.1:8000/metrics"
+
+	// Отправка GET-запроса
+	response, err := http.Get(url)
+	if err != nil {
+		return fmt.Sprint("Ошибка при отправке запроса:", err)
+	}
+	defer response.Body.Close()
+
+	// Чтение тела ответа
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return fmt.Sprint("Ошибка при чтении ответа:", err)
+
+	}
+
+	// Преобразование тела ответа в строку
+	content := string(body)
+
+	// Использование регулярного выражения для поиска метрики go_memstats_frees_total
+	re := regexp.MustCompile(`go_memstats_frees_total (\d+)`)
+	matches := re.FindStringSubmatch(content)
+
+	// Вывод найденной метрики
+	if len(matches) >= 2 {
+		return fmt.Sprintf("Метрика go_memstats_frees_total: %s\n", matches[1])
+	} else {
+		return fmt.Sprintf("Метрика go_memstats_frees_total не найдена.")
+	}
 }
 
-func (c *Checker) Ping() error {
+func (d *Data) Ping() error {
 	return nil
 }
 
-func (c *Checker) GetID() string {
+func (d *Data) GetID() string {
 	var userInput string
 
 	fmt.Print("Введите ID: ")
@@ -55,6 +93,6 @@ func (c *Checker) GetID() string {
 	return strings.TrimSpace(userInput)
 }
 
-func (c *Checker) Health() bool {
+func (d *Data) Health() bool {
 	return true
 }
